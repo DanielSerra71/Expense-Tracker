@@ -1,5 +1,5 @@
 {
     "appId": "com.expensetracker.app",
     "appName": "Expense Tracker",
-    "webDir": "www"
+    "webDir": "docs"
 }

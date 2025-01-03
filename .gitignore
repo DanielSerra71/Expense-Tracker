@@ -5,7 +5,7 @@
 
 # Build
 /dist
-/www/build
+/docs/build
 /platforms
 /plugins
 

@@ -1,11 +1,11 @@
 {
     "name": "Control de Gastos",
     "short_name": "Gastos",
-    "description": "Aplicación para control de gastos personales",
-    "start_url": "/index.html",
+    "start_url": "./index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#2ecc71",
+    "orientation": "portrait",
     "icons": [
         {
             "src": "icons/icon-72x72.png",
