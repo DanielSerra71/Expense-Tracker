@@ -1,0 +1,19 @@
+# Dependencies
+/node_modules
+/android
+/ios
+
+# Build
+/dist
+/www/build
+/platforms
+/plugins
+
+# IDE
+/.idea
+/.vscode
+
+# Misc
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos Personal</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Agregamos Font Awesome para iconos modernos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2ecc71">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+</head>
+
+<body>
+    <div id="notification-container"></div>
+    <div class="container">
+        <header class="app-header">
+            <h1><i class="fas fa-wallet"></i> <span data-translate="appTitle">Control de Gastos</span></h1>
+            <div class="app-controls">
+                <button class="language-toggle" title="Cambiar idioma">
+                    <i class="fas fa-globe"></i>
+                    <span class="lang-text">ES</span>
+                </button>
+                <button class="theme-toggle" title="Cambiar tema">
+                    <i class="fas fa-sun-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="balance-card">
+            <h2 data-translate="totalBalance">Balance Total</h2>
+            <p id="balance">$0.00</p>
+            <div class="summary">
+                <div class="summary-card income">
+                    <i class="fas fa-arrow-up"></i>
+                    <h3 data-translate="income">Ingresos</h3>
+                    <p id="income" class="money plus">$0.00</p>
+                </div>
+                <div class="summary-card expense">
+                    <i class="fas fa-arrow-down"></i>
+                    <h3 data-translate="expense">Gastos</h3>
+                    <p id="expense" class="money minus">$0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="monthly-summary">
+            <h3 data-translate="monthlySummary"><i class="fas fa-calendar-alt"></i> Resumen del Mes</h3>
+            <div class="month-selector">
+                <button id="prevMonth" class="btn-icon">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <h4 id="currentMonth">Abril 2024</h4>
+                <button id="nextMonth" class="btn-icon">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="monthly-stats">
+                <div class="stat-card">
+                    <h5 data-translate="monthlyIncome">Ingresos del Mes</h5>
+                    <p id="monthIncome">$0.00</p>
+                </div>
+                <div class="stat-card">
+                    <h5 data-translate="monthlyExpense">Gastos del Mes</h5>
+                    <p id="monthExpense">$0.00</p>
+                </div>
+                <div class="stat-card">
+                    <h5 data-translate="monthlyBalance">Balance del Mes</h5>
+                    <p id="monthBalance">$0.00</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="transaction-form">
+            <h3 data-translate="newTransaction"><i class="fas fa-plus-circle"></i> Nueva Transacción</h3>
+            <form id="form">
+                <div class="form-group">
+                    <label data-translate="transactionType" for="transaction-type">Tipo de Transacción</label>
+                    <select id="transaction-type" required>
+                        <option value="" data-translate="selectType">Seleccione tipo</option>
+                        <option value="income" data-translate="income">Ingreso</option>
+                        <option value="expense" data-translate="expense">Gasto</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="frequentTransactions" for="preset-transactions">Transacciones
+                        Frecuentes</label>
+                    <select id="preset-transactions">
+                        <option value="" data-translate="selectOrCreate">Seleccione o cree nueva</option>
+                        <option value="income-presets-header" disabled
+                            style="font-weight: bold; background-color: var(--bg-color);"
+                            data-translate="frequentIncomes">
+                            Ingresos Frecuentes
+                        </option>
+                        <option value="salary" data-translate="salary">Salario</option>
+                        <option value="freelance" data-translate="freelance">Trabajo Freelance</option>
+                        <option value="investments" data-translate="investments">Inversiones</option>
+                        <option value="rent" data-translate="rent">Alquiler</option>
+                        <option value="bonus" data-translate="bonus">Bono</option>
+
+                        <option value="expense-presets-header" disabled
+                            style="font-weight: bold; background-color: var(--bg-color);"
+                            data-translate="frequentExpenses">
+                            Gastos Frecuentes
+                        </option>
+                        <option value="rent-expense" data-translate="rentExpense">Alquiler/Hipoteca</option>
+                        <option value="utilities" data-translate="utilities">Servicios (Luz/Agua/Gas)</option>
+                        <option value="groceries" data-translate="groceries">Supermercado</option>
+                        <option value="transport" data-translate="transport">Transporte</option>
+                        <option value="internet" data-translate="internet">Internet/Teléfono</option>
+                        <option value="entertainment" data-translate="entertainment">Entretenimiento</option>
+                        <option value="healthcare" data-translate="healthcare">Salud</option>
+                        <option value="clothing" data-translate="clothing">Ropa</option>
+                        <option value="restaurants" data-translate="restaurants">Restaurantes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="description" for="description">Descripción</label>
+                    <div class="description-input-group">
+                        <input type="text" id="description" required>
+                        <button type="button" id="save-preset" class="btn-icon" title="Guardar como preset">
+                            <i class="fas fa-save"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="amount" for="amount">Monto</label>
+                    <input type="number" id="amount" required step="0.01">
+                    <small data-translate="enterPositiveAmount">Ingrese el monto en positivo</small>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="date" for="transaction-date">Fecha</label>
+                    <input type="date" id="transaction-date" required>
+                    <small data-translate="selectDate">Seleccione la fecha de la transacción</small>
+                </div>
+
+                <div class="form-group">
+                    <label data-translate="category" for="category">Categoría</label>
+                    <select id="category" required>
+                        <option value="" data-translate="selectCategory">Seleccione categoría</option>
+                        <option value="income-categories-header" disabled
+                            style="font-weight: bold; background-color: var(--bg-color);"
+                            data-translate="incomeCategories">
+                            Categorías de Ingresos
+                        </option>
+                        <option value="salary" data-translate="salary">Salario</option>
+                        <option value="business" data-translate="business">Negocio</option>
+                        <option value="investments" data-translate="investments">Inversiones</option>
+                        <option value="extras" data-translate="extras">Extras</option>
+
+                        <option value="expense-categories-header" disabled
+                            style="font-weight: bold; background-color: var(--bg-color);"
+                            data-translate="expenseCategories">
+                            Categorías de Gastos
+                        </option>
+                        <option value="housing" data-translate="housing">Vivienda</option>
+                        <option value="food" data-translate="food">Alimentación</option>
+                        <option value="transport" data-translate="transport">Transporte</option>
+                        <option value="services" data-translate="services">Servicios</option>
+                        <option value="entertainment" data-translate="entertainment">Entretenimiento</option>
+                        <option value="healthcare" data-translate="healthcare">Salud</option>
+                        <option value="education" data-translate="education">Educación</option>
+                        <option value="shopping" data-translate="shopping">Compras</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-plus"></i> <span data-translate="addTransaction">Agregar Transacción</span>
+                </button>
+            </form>
+        </div>
+
+        <div class="transactions-section">
+            <h3><i class="fas fa-list"></i> <span data-translate="transactionHistory">Historial de Transacciones</span>
+            </h3>
+            <div class="date-filters">
+                <select id="dateFilterType">
+                    <option value="all" data-translate="allHistory">Todo el historial</option>
+                    <option value="custom" data-translate="customRange">Rango personalizado</option>
+                    <option value="month" data-translate="specificMonth">Mes específico</option>
+                    <option value="week" data-translate="lastWeek">Última semana</option>
+                    <option value="today" data-translate="today">Hoy</option>
+                </select>
+
+                <div id="customDateFilter" class="custom-date-filter" style="display: none;">
+                    <input type="date" id="startDate">
+                    <span>hasta</span>
+                    <input type="date" id="endDate">
+                </div>
+
+                <div id="monthFilter" class="month-filter" style="display: none;">
+                    <input type="month" id="specificMonth">
+                </div>
+            </div>
+            <div class="filters">
+                <select id="filter-category">
+                    <option value="todas" data-translate="allCategories">Todas las categorías</option>
+                    <option value="income-header" disabled style="font-weight: bold; background-color: var(--bg-color);"
+                        data-translate="incomeCategories">
+                        Categorías de Ingresos
+                    </option>
+                    <option value="salary" data-translate="salary">Salario</option>
+                    <option value="business" data-translate="business">Negocio</option>
+                    <option value="investments" data-translate="investments">Inversiones</option>
+                    <option value="extras" data-translate="extras">Extras</option>
+
+                    <option value="expense-header" disabled
+                        style="font-weight: bold; background-color: var(--bg-color);"
+                        data-translate="expenseCategories">
+                        Categorías de Gastos
+                    </option>
+                    <option value="housing" data-translate="housing">Vivienda</option>
+                    <option value="food" data-translate="food">Alimentación</option>
+                    <option value="transport" data-translate="transport">Transporte</option>
+                    <option value="services" data-translate="services">Servicios</option>
+                    <option value="entertainment" data-translate="entertainment">Entretenimiento</option>
+                    <option value="healthcare" data-translate="healthcare">Salud</option>
+                    <option value="education" data-translate="education">Educación</option>
+                    <option value="shopping" data-translate="shopping">Compras</option>
+                </select>
+                <select id="filter-type">
+                    <option value="todas" data-translate="allTypes">Todos los tipos</option>
+                    <option value="ingreso" data-translate="income">Ingresos</option>
+                    <option value="gasto" data-translate="expense">Gastos</option>
+                </select>
+            </div>
+            <ul id="transactions" class="transactions"></ul>
+        </div>
+
+        <div class="monthly-details">
+            <h3><i class="fas fa-history"></i> <span data-translate="monthlyHistory">Historial por Mes</span></h3>
+            <div class="month-list" id="monthList">
+                <!-- Se llenará dinámicamente con JavaScript -->
+            </div>
+        </div>
+
+        <div class="recurring-section">
+            <h3><i class="fas fa-sync"></i> <span data-translate="recurringPayments">Pagos Recurrentes</span></h3>
+
+            <div class="recurring-controls">
+                <button class="btn-submit" id="addRecurringBtn">
+                    <i class="fas fa-plus"></i> <span data-translate="newRecurringPayment">Nuevo Pago Recurrente</span>
+                </button>
+            </div>
+
+            <div class="recurring-list" id="recurringList">
+                <!-- Se llenará dinámicamente -->
+            </div>
+
+            <!-- Modal para agregar/editar pagos recurrentes -->
+            <div class="modal" id="recurringModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4><i class="fas fa-sync"></i> <span data-translate="configureRecurringPayment">Configurar Pago
+                                Recurrente</span></h4>
+                        <button class="close-modal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <form id="recurringForm">
+                        <div class="form-group">
+                            <label data-translate="transactionType" for="recurring-type">Tipo</label>
+                            <select id="recurring-type" required>
+                                <option value="" data-translate="selectType">Seleccione tipo</option>
+                                <option value="expense" data-translate="expense">Gasto</option>
+                                <option value="income" data-translate="income">Ingreso</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="description" for="recurring-description">Descripción</label>
+                            <input type="text" id="recurring-description" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="amount" for="recurring-amount">Monto</label>
+                            <input type="number" id="recurring-amount" step="any" min="0" placeholder="0.00"
+                                pattern="[0-9]*[.,]?[0-9]*" inputmode="decimal" required>
+                            <small data-translate="enterPositiveAmount">Ingrese el monto en positivo</small>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="category" for="recurring-category">Categoría</label>
+                            <select id="recurring-category" required>
+                                <option value="" data-translate="selectCategory">Seleccione categoría</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="frequency" for="recurring-frequency">Frecuencia</label>
+                            <select id="recurring-frequency" required>
+                                <option value="monthly" data-translate="monthly">Mensual</option>
+                                <option value="biweekly" data-translate="biweekly">Quincenal</option>
+                                <option value="weekly" data-translate="weekly">Semanal</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="dayOfMonth" for="recurring-day">Día del mes</label>
+                            <input type="number" id="recurring-day" min="1" max="31" required>
+                            <small data-translate="selectValidDay">Seleccione un día válido (1-31)</small>
+                        </div>
+                        <div class="form-group">
+                            <label data-translate="reminder" for="recurring-reminder">Recordatorio</label>
+                            <div class="reminder-config">
+                                <div class="reminder-input">
+                                    <input type="number" id="recurring-reminder-days" min="0" max="30" value="0">
+                                    <span data-translate="days">días</span>
+                                </div>
+                                <div class="reminder-input">
+                                    <input type="number" id="recurring-reminder-hours" min="0" max="23" value="0">
+                                    <span data-translate="hours">horas</span>
+                                </div>
+                                <div class="reminder-input">
+                                    <input type="number" id="recurring-reminder-minutes" min="0" max="59" value="0">
+                                    <span data-translate="minutes">minutos</span>
+                                </div>
+                            </div>
+                            <small data-translate="configureReminder">Configura cuándo quieres recibir el recordatorio
+                                antes del pago</small>
+                        </div>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i> <span data-translate="save">Guardar</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal de recordatorios -->
+            <div class="modal" id="remindersModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4><i class="fas fa-bell"></i> Recordatorios Pendientes</h4>
+                        <button class="close-modal">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="reminders-list" id="remindersList">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agregar justo después del remindersModal -->
+        <div class="modal" id="confirmationModal">
+            <div class="modal-content confirmation-modal">
+                <div class="modal-header">
+                    <h4><i class="fas fa-exclamation-triangle"></i> <span data-translate="confirmAction">Confirmar
+                            Acción</span></h4>
+                    <button class="close-modal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="confirmation-content">
+                    <p id="confirmationMessage"></p>
+                </div>
+                <div class="confirmation-actions">
+                    <button class="btn-submit btn-cancel" id="cancelConfirmation">
+                        <i class="fas fa-times"></i> <span data-translate="cancel">Cancelar</span>
+                    </button>
+                    <button class="btn-submit btn-confirm" id="confirmAction">
+                        <i class="fas fa-check"></i> <span data-translate="confirm">Confirmar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="img/logo.png" alt="Flexxity.net Logo">
+            </div>
+            <div class="footer-text">
+                <p>&copy; <span id="currentYear"></span> Flexxity.net - <span data-translate="copyright">Todos los
+                        derechos reservados</span></p>
+            </div>
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>

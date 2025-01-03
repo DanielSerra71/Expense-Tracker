@@ -1,0 +1,22 @@
+{
+    "name": "expense-tracker",
+    "version": "1.0.0",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "build": "electron-builder",
+        "cap:sync": "npx cap sync",
+        "cap:open": "npx cap open android"
+    },
+    "devDependencies": {
+        "electron": "^27.1.0",
+        "electron-builder": "^24.9.1"
+    },
+    "dependencies": {
+        "@capacitor/android": "^6.2.0",
+        "@capacitor/cli": "^6.2.0",
+        "@capacitor/core": "^6.2.0",
+        "@capacitor/ios": "^6.2.0",
+        "sharp": "^0.33.5"
+    }
+}
